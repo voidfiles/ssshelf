@@ -29,7 +29,7 @@ class S3Storage(object):
     async def create_key(self, storage_key, data=None):
         data = data if data else bytes()
 
-        return await retry_client(
+        await retry_client(
             self.get_s3_client().put_object,
             Bucket=self.bucket,
             Key=storage_key,
@@ -37,11 +37,16 @@ class S3Storage(object):
         )
 
     async def get_key(self, storage_key):
-        return await retry_client(
+        resp = await retry_client(
             self.get_s3_client().get_object,
             Bucket=self.bucket,
             Key=storage_key,
         )
+
+        return {
+            'data': await resp.get('Body').read(),
+            'metadata': resp.get('Metadata', {}),
+        }
 
     async def get_keys(self, prefix, max_keys=200, continuation_token=None):
 

@@ -25,9 +25,8 @@ def test_my_model_save(s3_client, loop):
 
     resp = loop.run_until_complete(storage.get_key('test'))
 
-    body_data = loop.run_until_complete(read_body(resp))
-
-    body_json = json.loads(body_data)
+    assert 'metadata' in resp
+    body_json = json.loads(resp['data'])
 
     assert document == body_json
 
