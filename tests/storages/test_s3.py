@@ -1,3 +1,4 @@
+from botocore.exceptions import ClientError
 import json
 import pytest
 from ssshelf.storages.s3 import S3Storage
@@ -29,6 +30,11 @@ def test_my_model_save(s3_client, loop):
     body_json = json.loads(resp['data'])
 
     assert document == body_json
+
+    loop.run_until_complete(storage.remove_key('test'))
+
+    with pytest.raises(ClientError):
+        loop.run_until_complete(storage.get_key('test'))
 
 
 @pytest.mark.moto
@@ -62,3 +68,13 @@ def test_multiple_keys(s3_client, loop):
         assert resp2['keys'][i] == 'bulk_test%03d' % (i + 10)
 
     assert 'continuation_token' not in resp2
+
+    # keys_to_delete = ['bulk_test%03d' % (i) for i in range(0, 20)]
+
+    # loop.run_until_complete(storage.remove_keys(keys_to_delete))
+
+    # resp3 = loop.run_until_complete(
+    #     storage.get_keys('bulk_test', max_keys=10,
+    #                      continuation_token=resp['continuation_token'])
+    # )
+    # assert len(resp3['keys']) == 0

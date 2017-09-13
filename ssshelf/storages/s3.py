@@ -36,6 +36,25 @@ class S3Storage(object):
             Body=data
         )
 
+    async def remove_key(self, storage_key):
+
+        await retry_client(
+            self.get_s3_client().delete_object,
+            Bucket=self.bucket,
+            Key=storage_key,
+        )
+
+    async def remove_keys(self, storage_keys):
+
+        await retry_client(
+            self.get_s3_client().delete_objects,
+            Bucket=self.bucket,
+            Delete={
+                "Objects": [{'Key': x} for x in storage_keys],
+                "Quiet": True,
+            },
+        )
+
     async def get_key(self, storage_key):
         resp = await retry_client(
             self.get_s3_client().get_object,

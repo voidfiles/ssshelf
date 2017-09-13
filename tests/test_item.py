@@ -93,3 +93,11 @@ def test_add_item(loop):
     loop.run_until_complete(bookmark_manager.add_item(bookmark, storage=ds))
     assert ds.create_key_call_count == 1
     assert ds.create_key_called_with['kwargs']['data'] == bookmark_manager.serialize_item(bookmark)
+
+
+def test_remove_item(loop):
+    ds = DummyStorage()
+    bookmark_manager = Bookmark()
+    bookmark = BookmarkModel(link='http://google.com')
+    loop.run_until_complete(bookmark_manager.remove_item(bookmark, storage=ds))
+    assert ds.remove_key_call_count == 1

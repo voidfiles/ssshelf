@@ -6,6 +6,8 @@ class DummyStorage(object):
         self.create_key_call_count = 0
         self.get_key_call_count = 0
         self.get_keys_call_count = 0
+        self.remove_key_call_count = 0
+        self.remove_keys_call_count = 0
 
     async def create_key(self, *args, **kwargs):
         self.create_key_call_count += 1
@@ -13,6 +15,12 @@ class DummyStorage(object):
             'args': args,
             'kwargs': kwargs
         }
+
+    async def remove_key(self, *args, **kwargs):
+        self.remove_key_call_count += 1
+
+    async def remove_keys(self, *args, **kwargs):
+        self.remove_keys_call_count += 1
 
     def _set_get_key(self, data=None, metadata=None):
         self._next_data = data

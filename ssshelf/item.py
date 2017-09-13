@@ -31,7 +31,7 @@ class ItemManager(object):
         key = self.generate_key_for_item(item)
         return await storage.create_key(key, data=self.serialize_item(item))
 
-    async def remove_item(self, item):
+    async def remove_item(self, item, storage):
         key = self.generate_key_for_item(item)
         return await storage.remove_key(key)
 

@@ -8,24 +8,7 @@ When you create a collection you must configure the pk attribute, and the order 
 The order attribute will determine where in the list the item falls.
 The pk attribute is how you will look of the object.
 """
-import urllib
 from .utils import RAISE_NOT_IMPLEMENTED, build_url_path
-
-
-def get_attr_or_die(item, attr):
-    value = getattr(item, attr, None)
-    if value is None:
-        raise AttributeException("The item is missing a value for the '%s' attribute" % (attr))
-
-    return value
-
-
-def parse_pk_from_key(key):
-    last_key_part = key.split('/')[-1]
-
-    key_prefix, primary_key = last_key_part.split('.', 1)
-
-    return primary_key
 
 
 class Collection(object):
@@ -39,6 +22,9 @@ class Collection(object):
 
     def get_pk(self, item):
         return item.pk
+
+    def parse_pk_from_key(self, key):
+        return key.split('/')[-1]
 
     def base_key_parts(self):
         return [self.prefix, self.name]
@@ -75,8 +61,12 @@ class Collection(object):
 
     async def get_items(max_items=200, continuation_key=None, storage=None):
 
-        return await storage.get_keys(
+        resp = await storage.get_keys(
             prefix=build_url_path(self.base_key_parts()),
             max_items=max_items,
             continuation_key=continuation_key
         )
+
+        resp['keys'] = [self.parse_pk_from_key(x) for x in resp['keys']]
+
+        return resp
