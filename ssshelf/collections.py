@@ -8,7 +8,7 @@ When you create a collection you must configure the pk attribute, and the order 
 The order attribute will determine where in the list the item falls.
 The pk attribute is how you will look of the object.
 """
-from .utils import RAISE_NOT_IMPLEMENTED, build_url_path
+from .utils import RAISE_NOT_IMPLEMENTED, build_url_path, camelcase_to_dash
 
 
 class Collection(object):
@@ -21,7 +21,7 @@ class Collection(object):
         return camelcase_to_dash(self.__class__.__name__)
 
     def get_pk(self, item):
-        return item.pk
+        return str(item.pk)
 
     def parse_pk_from_key(self, key):
         return key.split('/')[-1]
@@ -32,39 +32,41 @@ class Collection(object):
     def generate_keys_for_item(self, item):
         pk = self.get_pk(item)
 
-        for key_parts in self.key(item):
+        for key in self.key(item):
             key_parts = self.base_key_parts()
-            key_parts += self.get_storage_key_for_item(item)
+            key_parts += key
             key_parts += [pk]
 
             yield build_url_path(key_parts)
 
     async def add_item(self, item, storage):
         keys = []
+        reqs = []
         for storage_key in self.generate_keys_for_item(item):
-            keys += [key]
-            reqs += [storage.create_key(key)]
+            keys += [storage_key]
+            reqs += [storage.create_key(storage_key)]
 
         resps = [await x for x in reqs]
 
         return keys
 
-    async def remove_item(self, item):
+    async def remove_item(self, item, storage):
         keys = []
+        reqs = []
         for storage_key in self.generate_keys_for_item(item):
-            keys += [key]
-            reqs += [storage.remove_key(key)]
+            keys += [storage_key]
+            reqs += [storage.remove_key(storage_key)]
 
         resps = [await x for x in reqs]
 
         return keys
 
-    async def get_items(max_items=200, continuation_key=None, storage=None):
+    async def get_items(self, max_keys=200, continuation_token=None, storage=None):
 
         resp = await storage.get_keys(
             prefix=build_url_path(self.base_key_parts()),
-            max_items=max_items,
-            continuation_key=continuation_key
+            max_keys=max_keys,
+            continuation_token=continuation_token
         )
 
         resp['keys'] = [self.parse_pk_from_key(x) for x in resp['keys']]
