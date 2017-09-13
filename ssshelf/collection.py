@@ -8,6 +8,8 @@ When you create a collection you must configure the pk attribute, and the order 
 The order attribute will determine where in the list the item falls.
 The pk attribute is how you will look of the object.
 """
+import urllib
+from .utils import RAISE_NOT_IMPLEMENTED, build_url_path
 
 
 def get_attr_or_die(item, attr):
@@ -28,42 +30,53 @@ def parse_pk_from_key(key):
 
 class Collection(object):
 
-    name = None
-    item_class = None
-    order_attr = None
-    pk_attr = 'pk'
-    key_prefix = 'collections'
+    key = RAISE_NOT_IMPLEMENTED
+    prefix = 'collections'
 
-    def key(self, suffix):
-        return '%s/%s/%s' % (self.key_prefix, self.name, suffix)
+    @property
+    def name(self):
+        return camelcase_to_dash(self.__class__.__name__)
 
-    def get_order_attr_for_item(self, item):
-        return get_attr_or_die(item, self.order_attr)
+    def get_pk(self, item):
+        return item.pk
 
-    def get_pk_attr_for_item(self, item):
-        return get_attr_or_die(item, self.pk_attr)
+    def base_key_parts(self):
+        return [self.prefix, self.name]
 
-    def get_storage_key_for_item(self, item):
-        return '%s.%s' % (
-            hash(self.get_order_attr_for_item(item)),
-            self.get_pk_attr_for_item(),
-        )
+    def generate_keys_for_item(self, item):
+        pk = self.get_pk(item)
 
-    async def add_item(self, item):
-        storage_key = self.get_storage_key_for_item(item)
-        with storage as cl:
-            await cl.create_key(storage_key)
+        for key_parts in self.key(item):
+            key_parts = self.base_key_parts()
+            key_parts += self.get_storage_key_for_item(item)
+            key_parts += [pk]
+
+            yield build_url_path(key_parts)
+
+    async def add_item(self, item, storage):
+        keys = []
+        for storage_key in self.generate_keys_for_item(item):
+            keys += [key]
+            reqs += [storage.create_key(key)]
+
+        resps = [await x for x in reqs]
+
+        return keys
 
     async def remove_item(self, item):
-        storage_key = self.get_storage_key_for_item(item)
-        with storage as cl:
-            await cl.remove_key(storage_key)
+        keys = []
+        for storage_key in self.generate_keys_for_item(item):
+            keys += [key]
+            reqs += [storage.remove_key(key)]
 
-    async def get_page(start_at=None, end_at=None, max_items=200):
-        with storage as cl:
-            keys = await cl.get_keys(start_at=None, end_at=None, max_items=200)
+        resps = [await x for x in reqs]
 
-        primary_keys = [parse_pk_from_key(x) for x in keys]
+        return keys
 
-        self.item_class.get_items(primary_keys)
+    async def get_items(max_items=200, continuation_key=None, storage=None):
 
+        return await storage.get_keys(
+            prefix=build_url_path(self.base_key_parts()),
+            max_items=max_items,
+            continuation_key=continuation_key
+        )

@@ -30,6 +30,7 @@ def test_my_model_save(s3_client, loop):
 
     assert document == body_json
 
+
 @pytest.mark.moto
 def test_multiple_keys(s3_client, loop):
     loop.run_until_complete(create_bucket(s3_client))
