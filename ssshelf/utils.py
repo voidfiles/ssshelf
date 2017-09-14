@@ -18,6 +18,10 @@ class RaiseNotImplemented(object):
 RAISE_NOT_IMPLEMENTED = RaiseNotImplemented()
 
 
+def convert_datetime_to_str(dt):
+    return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 def type_handler(x):
     if isinstance(x, datetime.datetime):
         return x.strftime("%Y-%m-%dT%H:%M:%SZ")

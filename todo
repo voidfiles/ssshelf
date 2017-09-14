@@ -1,0 +1,6 @@
+- Look at semantics, naming etc, think it through
+- Collections should be mounted on managers but
+	- We should expose collections directly, they should have custom look up funtions
+	- In the case of tags, I want to pass a set of tags to a collection for lookup
+- More integration tests
+- Docs
