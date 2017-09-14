@@ -1,4 +1,4 @@
 aiobotocore
 paco
 retrying
-pytest-asyncio
+pygtrie

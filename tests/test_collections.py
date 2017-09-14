@@ -7,6 +7,7 @@ import pytest
 from ssshelf.collections import Collection
 from .dummy_storage import DummyStorage
 
+
 @attr.s
 class BookmarkModel(object):
     link = attr.ib()

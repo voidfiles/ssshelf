@@ -4,3 +4,4 @@ requests
 flask
 attrs
 iso8601==0.1.12
+pytest-asyncio

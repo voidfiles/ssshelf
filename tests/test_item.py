@@ -79,11 +79,11 @@ def test_serializer_deserializer():
     assert bookmark_2.pk == bookmark.pk
 
 
-def test_generate_key_for_item():
+def test_generate_key_for_pk():
     bookmark_manager = Bookmark()
     bookmark = BookmarkModel(link='http://google.com')
     expected_key = 'items/bookmark/%s' % (str(bookmark.pk))
-    assert bookmark_manager.generate_key_for_item(bookmark) == expected_key
+    assert bookmark_manager.generate_key_for_pk(str(bookmark.pk)) == expected_key
 
 
 def test_add_item(loop):
@@ -101,3 +101,16 @@ def test_remove_item(loop):
     bookmark = BookmarkModel(link='http://google.com')
     loop.run_until_complete(bookmark_manager.remove_item(bookmark, storage=ds))
     assert ds.remove_key_call_count == 1
+
+
+def test_get_item(loop):
+    ds = DummyStorage()
+    bookmark_manager = Bookmark()
+    bookmark = BookmarkModel(link='http://google.com')
+    ds._set_get_key(
+        data=bookmark_manager.serialize_item(bookmark),
+        metadata={},
+    )
+    resp = loop.run_until_complete(bookmark_manager.get_item('123', storage=ds))
+    assert ds.get_key_call_count == 1
+    assert resp.link == bookmark.link
