@@ -1,3 +1,11 @@
+"""
+Collection Managers
+-------------------
+
+Collection managers brings together the item manager,
+collections and storages.
+
+"""
 import six
 from .utils import RAISE_NOT_IMPLEMENTED
 from .collections import Collection

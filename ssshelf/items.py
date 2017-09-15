@@ -1,3 +1,12 @@
+"""
+Item Managers
+-------------
+
+An item manager allows you persist items, and retrieve
+them by keys.
+
+"""
+
 from .utils import camelcase_to_dash, build_url_path
 
 

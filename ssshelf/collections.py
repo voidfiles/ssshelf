@@ -1,13 +1,12 @@
 """
-SSShelf Collections
+Collections
+-----------
 
-A collections is an ordered list of items by an attribute
+Collections allow you to put items into
+queryable ordered lists.
 
-When you create a collection you must configure the pk attribute, and the order attribute.
-
-The order attribute will determine where in the list the item falls.
-The pk attribute is how you will look of the object.
 """
+
 from .utils import RAISE_NOT_IMPLEMENTED, build_url_path, camelcase_to_dash
 
 
