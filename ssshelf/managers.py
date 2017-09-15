@@ -1,7 +1,7 @@
 from .utils import RAISE_NOT_IMPLEMENTED
 
 
-class CollectionManager(object):
+class CManager(object):
     item_manager = RAISE_NOT_IMPLEMENTED
 
     def __init__(self, storage):

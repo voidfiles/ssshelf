@@ -3,7 +3,7 @@ from uuid import uuid4, UUID
 
 import attr
 
-from ssshelf.managers import CollectionManager
+from ssshelf.managers import CManager
 from ssshelf.collections import Collection
 from ssshelf.items import ItemManager
 from ssshelf.storages.inmemory import InMemoryStorage
@@ -36,7 +36,7 @@ class BookmarkItemManager(ItemManager):
         return str(item.pk)
 
 
-class BookmarkManager(CollectionManager):
+class BookmarkManager(CManager):
     item_manager = BookmarkItemManager()
 
 
