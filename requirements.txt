@@ -2,3 +2,4 @@ aiobotocore
 paco
 retrying
 pygtrie
+six

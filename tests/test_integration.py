@@ -61,7 +61,6 @@ class AllBookmarks(Collection):
         return str(item['pk'])
 
     def key(self, item):
-        print(item['created_at'])
         return convert_datetime_to_str(item['created_at'])
 
 
@@ -69,12 +68,15 @@ class TaggedBookmarks(Collection):
     def get_pk(self, item):
         return str(item['pk'])
 
+    def normalize_tags(self, tags):
+        tags = [x.lower() for x in tags]
+
+        return sorted(tags)
+
     def key(self, item):
         tag_combos = []
 
-        tags = [x.lower() for x in item.get('tags', [])]
-
-        tags = sorted(tags)
+        tags = self.normalize_tags(item.get('tags', []))
 
         possible_tag_combos = list(permutations(tags, r=2))
         possible_tag_combos += list(permutations(tags, r=3))
@@ -86,9 +88,18 @@ class TaggedBookmarks(Collection):
                 tag_combos.append(clean_combo)
                 yield clean_combo
 
+    async def get_items_for_tags(self, tags, *args, **kwargs):
+        tags = self.normalize_tags(tags)
+
+        kwargs.setdefault('prefix_parts', tags)
+
+        return await self.get_items(*args, **kwargs)
+
 
 class BookmarkManager(CManager):
     item_manager = Bookmark()
+    all = AllBookmarks()
+    tagged = TaggedBookmarks()
 
 
 def create_bookmarks():
@@ -197,14 +208,17 @@ def create_bookmarks():
 
 def test_bookmark(loop):
     bm = BookmarkManager(InMemoryStorage())
-    bm.add_collection('all', AllBookmarks())
-    bm.add_collection('tagged', TaggedBookmarks())
     bookmarks = create_bookmarks()
     for i in bookmarks:
         loop.run_until_complete(bm.add_item(i))
 
-    resp = loop.run_until_complete(bm.get_items_for_collection('all', max_keys=10))
+    resp = loop.run_until_complete(bm.all.get_items(max_keys=10))
     assert 'items' in resp
     assert len(resp['items']) == 10
     links = [x['link'] for x in resp['items']]
     assert 'http://aftertheflood.co/projects/atf-spark' in links
+
+    resp = loop.run_until_complete(bm.tagged.get_items_for_tags(['security']))
+
+    assert len(resp['items']) == 3
+    assert 'https://www.armis.com/blueborne/' in [x['link'] for x in resp['items']]

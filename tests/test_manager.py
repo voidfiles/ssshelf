@@ -36,10 +36,6 @@ class BookmarkItemManager(IManager):
         return str(item.pk)
 
 
-class BookmarkManager(CManager):
-    item_manager = BookmarkItemManager()
-
-
 class Dummy(Collection):
 
     def key(self, item):
@@ -47,11 +43,11 @@ class Dummy(Collection):
             [item.link]
         ]
 
-    async def add_item(self, item, storage):
+    async def add_item(self, item):
         self.add_item_called = True
         self.add_item_called_with = item
 
-    async def remove_item(self, item, storage):
+    async def remove_item(self, item):
         self.remove_item_called = True
         self.remove_item_called_with = item
 
@@ -63,43 +59,49 @@ class AllBookmarks(Collection):
         ]
 
 
-def test_add_collection():
-    bookmark_manager = BookmarkManager(DummyStorage())
-    bookmark_manager.add_collection('all', Dummy())
+class BookmarkManagerDummy(CManager):
+    item_manager = BookmarkItemManager()
 
-    assert isinstance(bookmark_manager._collections['all'], Dummy)
+    all = Dummy()
+
+
+class BookmarkManagerAll(CManager):
+    item_manager = BookmarkItemManager()
+
+    all = AllBookmarks()
+
+
+def test_add_collection():
+    bookmark_manager = BookmarkManagerDummy(DummyStorage())
+
+    assert isinstance(bookmark_manager.all, Dummy)
 
 
 def test_add_item(loop):
-    bookmark_manager = BookmarkManager(DummyStorage())
-    collection = Dummy()
-    bookmark_manager.add_collection('all', collection)
+    bookmark_manager = BookmarkManagerDummy(DummyStorage())
 
     item = BookmarkModel(link="http://google.com")
 
     loop.run_until_complete(bookmark_manager.add_item(item))
 
-    assert collection.add_item_called is True
-    assert collection.add_item_called_with.link == item.link
+    assert bookmark_manager.all.add_item_called is True
+    assert bookmark_manager.all.add_item_called_with.link == item.link
 
 
 def test_remove_item(loop):
-    bookmark_manager = BookmarkManager(DummyStorage())
-    collection = Dummy()
-    bookmark_manager.add_collection('all', collection)
+    bookmark_manager = BookmarkManagerDummy(DummyStorage())
 
     item = BookmarkModel(link="http://google.com")
 
     loop.run_until_complete(bookmark_manager.remove_item(item))
 
-    assert collection.remove_item_called is True
-    assert collection.remove_item_called_with.link == item.link
+    assert bookmark_manager.all.remove_item_called is True
+    assert bookmark_manager.all.remove_item_called_with.link == item.link
 
 
 def test_get_items_for_collection(loop):
     storage = InMemoryStorage()
-    bookmark_manager = BookmarkManager(storage)
-    bookmark_manager.add_collection('all', AllBookmarks())
+    bookmark_manager = BookmarkManagerAll(storage)
 
     item1 = BookmarkModel(link="http://google.com")
     item2 = BookmarkModel(link="http://news.ycombinator.com")
@@ -107,6 +109,6 @@ def test_get_items_for_collection(loop):
     loop.run_until_complete(bookmark_manager.add_item(item1))
     loop.run_until_complete(bookmark_manager.add_item(item2))
 
-    resp = loop.run_until_complete(bookmark_manager.get_items_for_collection('all'))
+    resp = loop.run_until_complete(bookmark_manager.all.get_items())
 
     assert len(resp['items']) == 2

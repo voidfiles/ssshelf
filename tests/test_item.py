@@ -89,8 +89,9 @@ def test_generate_key_for_pk():
 def test_add_item(loop):
     ds = DummyStorage()
     bookmark_manager = Bookmark()
+    bookmark_manager.set_storage(ds)
     bookmark = BookmarkModel(link='http://google.com')
-    loop.run_until_complete(bookmark_manager.add_item(bookmark, storage=ds))
+    loop.run_until_complete(bookmark_manager.add_item(bookmark))
     assert ds.create_key_call_count == 1
     assert ds.create_key_called_with['kwargs']['data'] == bookmark_manager.serialize_item(bookmark)
 
@@ -98,19 +99,21 @@ def test_add_item(loop):
 def test_remove_item(loop):
     ds = DummyStorage()
     bookmark_manager = Bookmark()
+    bookmark_manager.set_storage(ds)
     bookmark = BookmarkModel(link='http://google.com')
-    loop.run_until_complete(bookmark_manager.remove_item(bookmark, storage=ds))
+    loop.run_until_complete(bookmark_manager.remove_item(bookmark))
     assert ds.remove_key_call_count == 1
 
 
 def test_get_item(loop):
     ds = DummyStorage()
     bookmark_manager = Bookmark()
+    bookmark_manager.set_storage(ds)
     bookmark = BookmarkModel(link='http://google.com')
     ds._set_get_key(
         data=bookmark_manager.serialize_item(bookmark),
         metadata={},
     )
-    resp = loop.run_until_complete(bookmark_manager.get_item('123', storage=ds))
+    resp = loop.run_until_complete(bookmark_manager.get_item('123'))
     assert ds.get_key_call_count == 1
     assert resp.link == bookmark.link

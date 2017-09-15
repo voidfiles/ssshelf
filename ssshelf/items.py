@@ -2,11 +2,13 @@ from .utils import camelcase_to_dash, build_url_path
 
 
 class IManager(object):
-    prefix = 'items'
+    def __init__(self, prefix='items', name=None, storage=None):
+        self.name = name if name else camelcase_to_dash(self.__class__.__name__)
+        self.prefix = prefix
+        self.storage = storage
 
-    @property
-    def name(self):
-        return camelcase_to_dash(self.__class__.__name__)
+    def set_storage(self, storage):
+        self.storage = storage
 
     def base_key_parts(self):
         return [self.prefix, self.name]
@@ -27,16 +29,16 @@ class IManager(object):
     def deserialize_item(self, data):
         raise NotImplementedError
 
-    async def add_item(self, item, storage):
+    async def add_item(self, item):
         key = self.generate_key_for_pk(self.get_pk(item))
-        return await storage.create_key(key, data=self.serialize_item(item))
+        return await self.storage.create_key(key, data=self.serialize_item(item))
 
-    async def remove_item(self, item, storage):
+    async def remove_item(self, item):
         key = self.generate_key_for_pk(self.get_pk(item))
-        return await storage.remove_key(key)
+        return await self.storage.remove_key(key)
 
-    async def get_item(self, pk, storage):
+    async def get_item(self, pk):
         key = self.generate_key_for_pk(pk)
-        resp = await storage.get_key(key)
+        resp = await self.storage.get_key(key)
 
         return self.deserialize_item(resp['data'])
