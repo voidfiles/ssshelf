@@ -4,6 +4,8 @@ An S3 persistance manager. If you squint closely enough you could even call it a
 
 ## Goals
 
+- High test coverage
+- Lots of examples
 - Treat s3 like a database
 
 ## Concerns
