@@ -3,7 +3,7 @@ from uuid import uuid4, UUID
 
 import attr
 
-from ssshelf.manager import Manager
+from ssshelf.managers import Manager
 from ssshelf.collections import Collection
 from ssshelf.items import ItemManager
 from ssshelf.storages.inmemory import InMemoryStorage

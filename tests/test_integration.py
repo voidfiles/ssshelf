@@ -11,7 +11,7 @@ from strainer.validators import export_validator
 from ssshelf.items import ItemManager
 from ssshelf.collections import Collection
 from ssshelf.utils import convert_datetime_to_str, json_dump
-from ssshelf.manager import Manager
+from ssshelf.managers import Manager
 from ssshelf.storages.inmemory import InMemoryStorage
 
 # Item stuff
