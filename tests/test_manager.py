@@ -5,7 +5,7 @@ import attr
 
 from ssshelf.managers import CManager
 from ssshelf.collections import Collection
-from ssshelf.items import ItemManager
+from ssshelf.items import IManager
 from ssshelf.storages.inmemory import InMemoryStorage
 from ssshelf.utils import json_dump
 from .dummy_storage import DummyStorage
@@ -24,7 +24,7 @@ class BookmarkModel(object):
     pk = attr.ib(default=attr.Factory(uuid4), convert=convert_uuid)
 
 
-class BookmarkItemManager(ItemManager):
+class BookmarkItemManager(IManager):
     def serialize_item(self, item):
         return bytes(json_dump(attr.asdict(item)), 'utf8')
 

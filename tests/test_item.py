@@ -7,12 +7,12 @@ import iso8601
 import pytest
 
 
-from ssshelf.items import ItemManager
+from ssshelf.items import IManager
 from ssshelf.utils import json_dump
 from .dummy_storage import DummyStorage
 
 
-class Dummy(ItemManager):
+class Dummy(IManager):
     pass
 
 
@@ -38,7 +38,7 @@ class BookmarkModel(object):
     pk = attr.ib(default=attr.Factory(uuid4), convert=convert_uuid)
 
 
-class Bookmark(ItemManager):
+class Bookmark(IManager):
     def serialize_item(self, item):
         return bytes(json_dump(attr.asdict(item)), 'utf8')
 

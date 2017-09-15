@@ -1,7 +1,7 @@
 from .utils import camelcase_to_dash, build_url_path
 
 
-class ItemManager(object):
+class IManager(object):
     prefix = 'items'
 
     @property

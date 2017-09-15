@@ -8,7 +8,7 @@ from strainer import (serializer, field, child, multiple_field,
                       ValidationException)
 from strainer.formatters import export_formatter
 from strainer.validators import export_validator
-from ssshelf.items import ItemManager
+from ssshelf.items import IManager
 from ssshelf.collections import Collection
 from ssshelf.utils import convert_datetime_to_str, json_dump
 from ssshelf.managers import CManager
@@ -45,7 +45,7 @@ def create_bookmark(data, created_at=None):
 # Item Manager
 
 
-class Bookmark(ItemManager):
+class Bookmark(IManager):
     def get_pk(self, item):
         return str(item['pk'])
 
