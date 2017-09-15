@@ -1,5 +1,4 @@
 import datetime
-import mock
 import json
 from uuid import uuid4, UUID
 
@@ -8,9 +7,10 @@ import iso8601
 import pytest
 
 
-from ssshelf.item import ItemManager
+from ssshelf.items import ItemManager
 from ssshelf.utils import json_dump
 from .dummy_storage import DummyStorage
+
 
 class Dummy(ItemManager):
     pass

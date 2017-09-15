@@ -8,7 +8,7 @@ from strainer import (serializer, field, child, multiple_field,
                       ValidationException)
 from strainer.formatters import export_formatter
 from strainer.validators import export_validator
-from ssshelf.item import ItemManager
+from ssshelf.items import ItemManager
 from ssshelf.collections import Collection
 from ssshelf.utils import convert_datetime_to_str, json_dump
 from ssshelf.manager import Manager
