@@ -8,7 +8,8 @@ import pytest
 from ssshelf.collections import Collection
 from ssshelf.items import IManager
 from .dummy_storage import DummyStorage
-from ssshelf.utils import json_dump
+from ssshelf.utils import json_dump, datetime_to_secs
+from ssshelf.keys import encode_int_as_str, reverse
 
 @attr.s
 class BookmarkModel(object):
@@ -35,8 +36,11 @@ class Dummy(Collection):
 
 class AllBookmarks(Collection):
     def key(self, item):
+        created_at_secs = datetime_to_secs(item.created_at)
+        created_at_str = encode_int_as_str(created_at_secs)
+        created_at_str_reverse = reverse(created_at_str)
         return [
-            [item.created_at.strftime("%Y-%m-%dT%H:%M:%SZ")]
+            [created_at_str_reverse]
         ]
 
 
@@ -68,8 +72,9 @@ def test_generate_keys():
         created_at=datetime.datetime(2017, 10, 10),
         pk=UUID("1eeaf5ed-11a1-4f72-8c1f-9c53b9584e34")
     )
+
     assert list(ab.generate_keys_for_item(bookmark)) == [
-        "collections/all-bookmarks/2017-10-10T00%3A00%3A00Z/1eeaf5ed-11a1-4f72-8c1f-9c53b9584e34"
+        'collections/all-bookmarks/wBqBzT/1eeaf5ed-11a1-4f72-8c1f-9c53b9584e34'
     ]
 
 
