@@ -1,4 +1,5 @@
 import datetime
+import time
 import json
 from uuid import UUID
 import re
@@ -40,3 +41,7 @@ def json_dump(*args, **kwargs):
 
 def build_url_path(parts):
     return '/'.join([quote_plus(x) for x in parts])
+
+
+def datetime_to_secs(dt):
+    return int(time.mktime(dt.timetuple()))
