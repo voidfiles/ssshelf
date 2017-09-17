@@ -21,7 +21,7 @@ class S3Storage(object):
         if self.s3_client:
             return self.s3_client
 
-        session = aiobotocore.get_session(loop=loop)
+        session = aiobotocore.get_session()
         self.s3_client = session.create_client('s3', **self.aws_client_kwargs)
 
         return self.s3_client
