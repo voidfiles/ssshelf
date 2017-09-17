@@ -40,12 +40,25 @@ packages = [
 ]
 
 
-with open('requirements.txt', 'r') as fd:
-    requires = [x for x in fd.readlines()]
+requires = [
+    "aiobotocore>=0.4.5",
+    "paco>=0.1.11",
+    "retrying>=1.3.3",
+    "pygtrie>=2.2",
+    "six>=1.10.0",
+]
 
-
-with open('test_requirements.txt', 'r') as fd:
-    test_requirements = [x for x in fd.readlines()]
+test_requirements = [
+    "moto",
+    "pytest",
+    "requests",
+    "flask",
+    "attrs",
+    "iso8601==0.1.12",
+    "pytest-asyncio",
+    "pystrainer==1.3.1",
+    "simpleflake",
+]
 
 with open('ssshelf/__init__.py', 'r') as fd:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
@@ -67,7 +80,13 @@ setup(
     author_email='voidfiles@gmail.com',
     url='http://github.com/voidfiles/ssshelf',
     packages=packages,
-    package_data={'': ['LICENSE'], 'ssshelf': []},
+    package_data={
+        '': [
+            'LICENSE',
+            '*.txt',
+        ],
+        'ssshelf': []
+    },
     package_dir={
         'ssshelf': 'ssshelf',
     },
