@@ -17,6 +17,11 @@ Concerns
 - Speed
 - Constraints
 
+Examples Using SSShelf
+----------------------
+
+- A URL Shortner ready for heroku https://github.com/voidfiles/ssshelf-url-shortener
+
 Example
 -------
 
