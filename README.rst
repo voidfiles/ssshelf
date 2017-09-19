@@ -7,6 +7,15 @@ SSShelf
 .. image:: https://travis-ci.org/voidfiles/ssshelf.svg?branch=master
     :target: https://travis-ci.org/voidfiles/ssshelf
 
+.. image:: https://codeclimate.com/github/voidfiles/ssshelf/badges/gpa.svg
+   :target: https://codeclimate.com/github/voidfiles/ssshelf
+   :alt: Code Climate
+
+.. image:: https://codeclimate.com/github/voidfiles/ssshelf/badges/coverage.svg
+   :target: https://codeclimate.com/voidfiles/ssshelf/codeclimate/coverage
+   :alt: Test Coverage
+
+
 An S3 persistance manager. If you squint closely enough you could even call it a database.
 
 Goals

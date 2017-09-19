@@ -12,9 +12,10 @@ class ReadCacheInMemory(object):
         del self._cache[storage_key]
 
     async def remove_keys(self, storage_keys):
-        await self.storage.remove_keys(storages_keys)
-        for x in storages_keys:
-            del self._cache[x]
+        await self.storage.remove_keys(storage_keys)
+        for x in storage_keys:
+            if x in self._cache:
+                del self._cache[x]
 
     async def get_key(self, storage_key):
         if storage_key not in self._cache:
