@@ -21,9 +21,10 @@ class CManagerMetaclass(type):
 
     @classmethod
     def _get_declared_collections(cls, bases, attrs):
-        fields = [(collection_name, attrs.get(collection_name))
-                  for collection_name, obj in list(attrs.items())
-                  if isinstance(obj, Collection)]
+        fields = []
+        for collection_name, obj in list(attrs.items()):
+            if isinstance(obj, Collection):
+                fields += [(collection_name, attrs.get(collection_name))]
 
         # If this class is subclassing another Serializer, add that Serializer's
         # fields.  Note that we loop over the bases in *reverse*. This is necessary
