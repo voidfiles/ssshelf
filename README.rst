@@ -1,6 +1,12 @@
 SSShelf
 =======
 
+.. image:: https://img.shields.io/pypi/v/ssshelf.svg
+    :target: https://pypi.python.org/pypi/ssshelf
+
+.. image:: https://travis-ci.org/voidfiles/ssshelf.svg?branch=master
+    :target: https://travis-ci.org/voidfiles/ssshelf
+
 An S3 persistance manager. If you squint closely enough you could even call it a database.
 
 Goals
