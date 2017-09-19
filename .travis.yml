@@ -17,7 +17,7 @@ install:
   - pip install -r requirements.txt
   - pip install -r test_requirements.txt
 script:
-  - pytest --cov=ssshel tests
+  - pytest --cov=ssshelf tests
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
   - ls -altrh
