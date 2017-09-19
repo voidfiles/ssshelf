@@ -1,6 +1,10 @@
 env:
   global:
     - CC_TEST_REPORTER_ID=ba1a6bd3e2165bdd045cae1e69f30182022852150df3f3322b1c25a9b04b65c3
+    - AWS_ACCESS_KEY_ID=test
+    - AWS_SECRET_ACCESS_KEY=test
+    - AWS_DEFAULT_REGION=us-east-1
+    - AWS_BUCKET=test
 language: python
 python:
   - 3.6
@@ -15,5 +19,5 @@ install:
 script:
   - pytest --cov=ssshel tests
 after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
   - ls -altrh
