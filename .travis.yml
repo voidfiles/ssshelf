@@ -1,0 +1,19 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=ba1a6bd3e2165bdd045cae1e69f30182022852150df3f3322b1c25a9b04b65c3
+language: python
+python:
+  - 3.6
+  - nightly
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+install:
+  - pip install -r requirements.txt
+  - pip install -r test_requirements.txt
+script:
+  - pytest --cov=ssshel tests
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
+  - ls -altrh
