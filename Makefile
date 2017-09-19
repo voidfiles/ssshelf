@@ -23,7 +23,7 @@ test:
 		-e "AWS_SECRET_ACCESS_KEY=test" \
 		-e "AWS_DEFAULT_REGION=us-east-1" \
 		ssshelf \
-		/usr/local/bin/python -m pytest --cov=ssshel tests
+		/usr/local/bin/python -m pytest --cov=ssshelf tests
 
 shell:
 	docker run --rm -it \
