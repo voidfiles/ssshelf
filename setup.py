@@ -29,11 +29,6 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 
-if sys.argv[-1] == 'publish':
-    os.system('python setup.py sdist')
-    os.system('twine upload dist/*')
-    sys.exit()
-
 packages = [
     'ssshelf',
     'ssshelf.storages'

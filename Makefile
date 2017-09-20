@@ -2,7 +2,12 @@ CWD=$(shell pwd)
 
 clean:
 	rm -fR dist
-	rm -fRr build
+	rm -fR build
+	rm -fR ssshelf.egg-info
+
+publish:
+	python setup.py build sdist
+	twine upload dist/*
 
 vendor:
 	docker run --rm -i \
