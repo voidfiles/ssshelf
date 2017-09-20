@@ -11,6 +11,8 @@ class InMemoryStorage(object):
 
         self.t[storage_key] = data
 
+        return data
+
     async def remove_key(self, storage_key):
         del self.t[storage_key]
 

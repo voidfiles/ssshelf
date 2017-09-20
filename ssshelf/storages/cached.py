@@ -4,8 +4,12 @@ class ReadCacheInMemory(object):
         self.storage = storage
         self._cache = {}
 
-    async def create_key(self, *args, **kwargs):
-        await self.storage.create_key(*args, **kwargs)
+    async def create_key(self, storage_key, data=None):
+        data = await self.storage.create_key(storage_key, data)
+        self._cache[storage_key] = {
+            'data': data,
+        }
+        return data
 
     async def remove_key(self, storage_key):
         await self.storage.remove_key(storage_key)

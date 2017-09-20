@@ -36,6 +36,8 @@ class S3Storage(object):
             Body=data
         )
 
+        return data
+
     async def remove_key(self, storage_key):
 
         await retry_client(

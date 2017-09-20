@@ -1,3 +1,5 @@
+import pytest
+
 from ssshelf.storages.cached import ReadCacheInMemory
 from ssshelf.storages.inmemory import InMemoryStorage
 
@@ -25,33 +27,33 @@ from ssshelf.storages.inmemory import InMemoryStorage
         return await self.storage.get_keys(*args, **kwargs)
 """
 
-def test_read_cache(loop):
+
+@pytest.mark.asyncio
+async def test_read_cache():
     in_memory_store = InMemoryStorage()
     read_cached_store = ReadCacheInMemory(in_memory_store)
 
-    loop.run_until_complete(read_cached_store.create_key('a', 'b'))
+    await read_cached_store.create_key('a', 'b')
+    assert 'a' in read_cached_store._cache
 
-    assert loop.run_until_complete(in_memory_store.get_key('a'))['data'] == 'b'
-    assert loop.run_until_complete(read_cached_store.get_key('a'))['data'] == 'b'
+    assert (await in_memory_store.get_key('a'))['data'] == 'b'
+    assert (await read_cached_store.get_key('a'))['data'] == 'b'
     assert 'a' in read_cached_store._cache
     assert read_cached_store._cache['a']['data'] == 'b'
 
-    loop.run_until_complete(read_cached_store.remove_key('a'))
+    await read_cached_store.remove_key('a')
     assert 'a' not in read_cached_store._cache
 
-    loop.run_until_complete(read_cached_store.create_key('a1', 'b'))
-    loop.run_until_complete(read_cached_store.create_key('a2', 'd'))
-    assert 'a1' not in read_cached_store._cache
-    assert 'a2' not in read_cached_store._cache
+    await read_cached_store.create_key('a1', 'b')
+    await read_cached_store.create_key('a2', 'd')
 
-    resp = loop.run_until_complete(read_cached_store.get_keys(prefix='a'))
+    resp = await read_cached_store.get_keys(prefix='a')
     assert len(resp['keys']) == 2
-    assert 'a1' not in read_cached_store._cache
-    assert 'a2' not in read_cached_store._cache
-    loop.run_until_complete(read_cached_store.get_key('a1'))
-    loop.run_until_complete(read_cached_store.get_key('a2'))
+
+    await read_cached_store.get_key('a1')
+    await read_cached_store.get_key('a2')
     assert 'a1' in read_cached_store._cache
     assert 'a2' in read_cached_store._cache
-    loop.run_until_complete(read_cached_store.remove_keys(['a1', 'a2']))
+    await read_cached_store.remove_keys(['a1', 'a2'])
     assert 'a1' not in read_cached_store._cache
     assert 'a2' not in read_cached_store._cache
