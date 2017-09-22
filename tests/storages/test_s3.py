@@ -47,14 +47,16 @@ def test_multiple_keys(s3_client, loop):
     }
 
     document_str = bytes(json.dumps(document), 'utf8')
-    for i in range(0, 20):
-        loop.run_until_complete(storage.create_key('bulk_test%03d' % (i), data=document_str))
+    keys = sorted([x for x in "abcdefghijklmnopqrst"], reverse=True)
+    for i in keys:
+        loop.run_until_complete(storage.create_key('bulk_test%s' % (i), data=document_str))
 
     resp = loop.run_until_complete(storage.get_keys('bulk_test', max_keys=10))
 
+    reverse_keys = sorted(keys)
     assert len(resp['keys']) == 10
-    for i in range(0, 10):
-        assert resp['keys'][i] == 'bulk_test%03d' % (i)
+    for i, key in enumerate(reverse_keys[0:9]):
+        assert resp['keys'][i] == 'bulk_test%s' % (key)
 
     assert 'continuation_token' in resp
 
@@ -64,8 +66,9 @@ def test_multiple_keys(s3_client, loop):
     )
 
     assert len(resp2['keys']) == 10
-    for i in range(0, 9):
-        assert resp2['keys'][i] == 'bulk_test%03d' % (i + 10)
+    for i, key in enumerate(reverse_keys[10:]):
+        print(i)
+        assert resp2['keys'][i] == 'bulk_test%s' % (key)
 
     assert 'continuation_token' not in resp2
 

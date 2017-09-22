@@ -5,6 +5,7 @@ class InMemoryStorage(object):
 
     def __init__(self):
         self.t = pygtrie.CharTrie()
+        self.t.enable_sorting()
 
     async def create_key(self, storage_key, data=None):
         data = data if data else bytes()

@@ -8,6 +8,8 @@ clean:
 publish:
 	python setup.py build sdist
 	twine upload dist/*
+	git tag v$(shell python setup.py version) || true
+	git push origin master --tags
 
 vendor:
 	docker run --rm -i \

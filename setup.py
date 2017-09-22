@@ -29,6 +29,14 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 
+with open('ssshelf/__init__.py', 'r') as fd:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
+
+if sys.argv[-1] == 'version':
+    print(version)
+    sys.exit()
+
 packages = [
     'ssshelf',
     'ssshelf.storages'
@@ -55,9 +63,6 @@ test_requirements = [
     "simpleflake",
 ]
 
-with open('ssshelf/__init__.py', 'r') as fd:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-                        fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError('Cannot find version information')
