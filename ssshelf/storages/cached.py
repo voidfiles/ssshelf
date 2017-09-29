@@ -1,7 +1,9 @@
+from .proxy import StorageProxy
 
-class ReadCacheInMemory(object):
+
+class ReadCacheInMemory(StorageProxy):
     def __init__(self, storage):
-        self.storage = storage
+        super(ReadCacheInMemory, self).__init__(storage)
         self._cache = {}
 
     async def create_key(self, storage_key, data=None):
@@ -27,6 +29,3 @@ class ReadCacheInMemory(object):
             self._cache[storage_key] = resp
 
         return self._cache[storage_key]
-
-    async def get_keys(self, *args, **kwargs):
-        return await self.storage.get_keys(*args, **kwargs)

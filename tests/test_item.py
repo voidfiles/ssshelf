@@ -46,9 +46,6 @@ class Bookmark(IManager):
         data = json.loads(data)
         return BookmarkModel(**data)
 
-    def get_pk(self, item):
-        return str(item.pk)
-
 
 def test_not_implmented():
     d = Dummy()

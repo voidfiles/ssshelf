@@ -38,6 +38,13 @@ def test_my_model_save(s3_client, loop):
 
 
 @pytest.mark.moto
+def test_get_s3_client():
+    storage = S3Storage(bucket='test_bucket')
+    session = storage.get_s3_client()
+    assert storage.s3_client
+
+
+@pytest.mark.moto
 def test_multiple_keys(s3_client, loop):
     loop.run_until_complete(create_bucket(s3_client))
 
@@ -72,12 +79,12 @@ def test_multiple_keys(s3_client, loop):
 
     assert 'continuation_token' not in resp2
 
-    # keys_to_delete = ['bulk_test%03d' % (i) for i in range(0, 20)]
+    keys_to_delete = ['bulk_test%s' % (i) for i in keys]
 
-    # loop.run_until_complete(storage.remove_keys(keys_to_delete))
+    loop.run_until_complete(storage.remove_keys(keys_to_delete))
 
-    # resp3 = loop.run_until_complete(
-    #     storage.get_keys('bulk_test', max_keys=10,
-    #                      continuation_token=resp['continuation_token'])
-    # )
-    # assert len(resp3['keys']) == 0
+    resp3 = loop.run_until_complete(
+        storage.get_keys('bulk_test', max_keys=10,
+                         continuation_token=resp['continuation_token'])
+    )
+    assert len(resp3['keys']) == 0
