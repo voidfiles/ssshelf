@@ -1,13 +1,13 @@
 import pytest
 
-from ssshelf.storages.cached import ReadCacheInMemory
+from ssshelf.storages.cached import ReadKeyCacheInMemory
 from ssshelf.storages.inmemory import InMemoryStorage
 from ssshelf.keys import IndexKey, PrefixKey
 
 @pytest.mark.asyncio
 async def test_read_cache():
     in_memory_store = InMemoryStorage()
-    read_cached_store = ReadCacheInMemory(in_memory_store)
+    read_cached_store = ReadKeyCacheInMemory(in_memory_store)
 
     await read_cached_store.create_key(IndexKey('a'), 'b')
     assert 'a' in read_cached_store._cache

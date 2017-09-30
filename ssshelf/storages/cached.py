@@ -1,8 +1,10 @@
+import pygtrie
+
 from .proxy import StorageProxy
 
-class ReadCacheInMemory(StorageProxy):
+class ReadKeyCacheInMemory(StorageProxy):
     def __init__(self, storage):
-        super(ReadCacheInMemory, self).__init__(storage)
+        super(ReadKeyCacheInMemory, self).__init__(storage)
         self._cache = {}
 
     async def create_key(self, storage_key, data=None):
@@ -28,3 +30,61 @@ class ReadCacheInMemory(StorageProxy):
             self._cache[storage_key.as_url_path()] = resp
 
         return self._cache[storage_key.as_url_path()]
+
+
+class ReadKeysCacheInMemory(StorageProxy):
+    def __init__(self, storage):
+        super(ReadKeysCacheInMemory, self).__init__(storage)
+        self.t = pygtrie.CharTrie()
+        self.t.enable_sorting()
+
+    async def create_key(self, storage_key, data=None):
+        data = await self.storage.create_key(storage_key, data)
+        self.t[storage_key.get_url_path()] = ''
+
+        return data
+
+    async def remove_key(self, storage_key):
+        await self.storage.remove_key(storage_key)
+        if storage_key.get_url_path() in self.t:
+            del self.t[storage_key.get_url_path()]
+
+    async def remove_keys(self, storage_keys):
+        await self.storage.remove_keys(storage_keys)
+        for x in storage_keys:
+            self._cache.remove(x.get_url_path())
+
+    async def get_keys(self, prefix, max_keys=200, continuation_token=None):
+        resp = None
+        start_token = continuation_token
+        if not start_token:
+            start_token = prefix.as_url_path()
+
+        keys = self.t.iterkeys(start_token)[:max_keys]
+
+        if len(keys) <= max_keys:
+            more = max_keys - len(keys)
+            start_token = keys[-1]
+            resp = self.storage.get_keys(prefix, more, start_token)
+            keys += resp['keys']
+            continuation_token = resp.get('NextContinuationToken')
+
+        if continuation_token:
+            kwargs['ContinuationToken'] = continuation_token
+
+        resp = await retry_client(
+            self.get_s3_client().list_objects_v2,
+            **kwargs,
+        )
+
+        response_keys = [x['Key'] for x in resp.get('Contents', [])]
+
+        resp_data = {
+            'keys': response_keys,
+        }
+
+        continuation_token = resp.get('NextContinuationToken')
+        if continuation_token:
+            resp_data['continuation_token'] = continuation_token
+
+        return resp_data
