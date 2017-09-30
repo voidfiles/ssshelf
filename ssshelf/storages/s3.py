@@ -71,7 +71,7 @@ class S3Storage(object):
             'metadata': resp.get('Metadata', {}),
         }
 
-    async def get_keys(self, prefix, max_keys=200, continuation_token=None):
+    async def get_keys(self, prefix, max_keys=200, after=None):
         resp = None
 
         kwargs = {
@@ -80,8 +80,8 @@ class S3Storage(object):
             "Prefix": prefix.as_url_path(),
         }
 
-        if continuation_token:
-            kwargs['ContinuationToken'] = continuation_token
+        if after:
+            kwargs['StartAfter'] = after
 
         resp = await retry_client(
             self.get_s3_client().list_objects_v2,
@@ -94,8 +94,8 @@ class S3Storage(object):
             'keys': response_keys,
         }
 
-        continuation_token = resp.get('NextContinuationToken')
-        if continuation_token:
-            resp_data['continuation_token'] = continuation_token
+        after = resp.get('IsTruncated')
+        if after:
+            resp_data['after'] = resp_data['keys'][-1]
 
         return resp_data

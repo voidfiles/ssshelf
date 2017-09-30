@@ -65,11 +65,11 @@ def test_multiple_keys(s3_client, loop):
     for i, key in enumerate(reverse_keys[0:9]):
         assert resp['keys'][i] == 'bulk_test%s' % (key)
 
-    assert 'continuation_token' in resp
+    assert 'after' in resp
 
     resp2 = loop.run_until_complete(
         storage.get_keys(PrefixKey(['bulk_test']), max_keys=10,
-                         continuation_token=resp['continuation_token'])
+                         after=resp['after'])
     )
 
     assert len(resp2['keys']) == 10
@@ -77,7 +77,7 @@ def test_multiple_keys(s3_client, loop):
         print(i)
         assert resp2['keys'][i] == 'bulk_test%s' % (key)
 
-    assert 'continuation_token' not in resp2
+    assert 'after' not in resp2
 
     keys_to_delete = [IndexKey('bulk_test%s' % (i)) for i in keys]
 
@@ -85,6 +85,6 @@ def test_multiple_keys(s3_client, loop):
 
     resp3 = loop.run_until_complete(
         storage.get_keys(PrefixKey(['bulk_test']), max_keys=10,
-                         continuation_token=resp['continuation_token'])
+                         after=resp['after'])
     )
     assert len(resp3['keys']) == 0

@@ -45,25 +45,26 @@ def test_multiple_keys(loop):
         assert resp['keys'][i] == IndexKey(pk='bulk_test%s' % (key),
                                            index_parts=[])
 
-    assert 'continuation_token' in resp
+    assert 'after' in resp
+    print(resp)
     resp2 = loop.run_until_complete(
         storage.get_keys(PrefixKey(['bulk_test']), max_keys=10,
-                         continuation_token=resp['continuation_token'])
+                         after=resp['after'])
     )
     assert len(resp2['keys']) == 10
     for i, key in enumerate(reverse_keys[10:]):
         assert resp2['keys'][i] == IndexKey(pk='bulk_test%s' % (key),
                                             index_parts=[])
 
-    assert 'continuation_token' not in resp2
-
+    assert 'after' not in resp2
+    print(resp2)
     keys_to_delete = [IndexKey('bulk_test%s' % (i)) for i in keys]
 
     loop.run_until_complete(storage.remove_keys(keys_to_delete))
 
     resp3 = loop.run_until_complete(
         storage.get_keys(PrefixKey(['bulk_test']), max_keys=10,
-                         continuation_token=resp['continuation_token'])
+                         after=resp['after'])
     )
 
     assert len(resp3['keys']) == 0

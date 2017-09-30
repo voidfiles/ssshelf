@@ -66,24 +66,24 @@ class Collection(object):
 
         return keys
 
-    async def get_keys(self, max_keys=200, continuation_token=None, prefix_parts=None):
+    async def get_keys(self, max_keys=200, after=None, prefix_parts=None):
         prefix_parts = prefix_parts if prefix_parts else []
 
         resp = await self.storage.get_keys(
             prefix=PrefixKey(self.base_key_parts() + prefix_parts),
             max_keys=max_keys,
-            continuation_token=continuation_token
+            after=after
         )
 
         resp['keys'] = [self.parse_pk_from_key(x) for x in resp['keys']]
 
         return resp
 
-    async def get_items(self, max_keys=200, continuation_token=None, prefix_parts=None):
+    async def get_items(self, max_keys=200, after=None, prefix_parts=None):
 
         resp = await self.get_keys(
             max_keys=max_keys,
-            continuation_token=continuation_token,
+            after=after,
             prefix_parts=prefix_parts,
         )
 
@@ -95,7 +95,7 @@ class Collection(object):
             'items': items,
         }
 
-        if 'continuation_token' in resp:
-            ret['continuation_token'] = resp['continuation_token']
+        if 'after' in resp:
+            ret['after'] = resp['after']
 
         return ret

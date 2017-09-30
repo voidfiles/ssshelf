@@ -36,6 +36,6 @@ class DummyStorage(object):
     def _set_get_keys(self, keys):
         self._next_keys = keys
 
-    async def get_keys(self, prefix, max_keys=200, continuation_token=None):
+    async def get_keys(self, prefix, max_keys=200, after=None):
         self.get_keys_call_count += 1
         return self._next_keys

@@ -28,16 +28,18 @@ class InMemoryStorage(object):
             'metadata': {},
         }
 
-    def _build_keys(self, key_iterator, max_keys, continuation_token):
+    def _build_keys(self, key_iterator, max_keys, after):
         keys = []
         found_token = False
 
         for x in key_iterator:
-            if continuation_token and found_token is False:
-                if x != continuation_token:
+            if after and found_token is False:
+                if x != after:
                     continue
 
                 found_token = True
+
+                continue
 
             keys.append(IndexKey.from_url_path(x))
 
@@ -46,26 +48,27 @@ class InMemoryStorage(object):
 
         return keys
 
-    async def get_keys(self, prefix, max_keys=200, continuation_token=None):
+    async def get_keys(self, prefix, max_keys=200, after=None):
         key_iterator = self.t.iterkeys(prefix.as_url_path())
 
         try:
-            keys = self._build_keys(key_iterator, max_keys, continuation_token)
+            keys = self._build_keys(key_iterator, max_keys, after)
         except KeyError:
             return {
                 'keys': []
             }
 
         try:
-            continuation_token = next(key_iterator)
+            next(key_iterator)
+            after = keys[-1].as_url_path()
         except StopIteration:
-            continuation_token = None
+            after = None
 
         ret = {
             'keys': keys,
         }
 
-        if continuation_token:
-            ret['continuation_token'] = continuation_token
+        if after:
+            ret['after'] = after
 
         return ret

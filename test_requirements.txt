@@ -9,3 +9,4 @@ pystrainer==1.3.1
 simpleflake
 pytest-cov
 coverage
+fakeredis
