@@ -2,7 +2,7 @@ import asyncio
 import aiobotocore
 from retrying import retry
 
-from ssshelf.keys import get_path_from_storage_key
+from ssshelf.keys import get_path_from_storage_key, get_path_from_prefix_key
 
 @retry(stop_max_attempt_number=2)
 def retry_client(method, *args, **kwargs):
@@ -77,7 +77,7 @@ class S3Storage(object):
         }
 
     async def get_keys(self, prefix, max_keys=200, continuation_token=None):
-
+        prefix = get_path_from_prefix_key(prefix)
         resp = None
 
         kwargs = {

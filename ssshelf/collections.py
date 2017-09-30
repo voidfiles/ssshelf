@@ -8,7 +8,7 @@ queryable ordered lists.
 """
 
 from .utils import RAISE_NOT_IMPLEMENTED, camelcase_to_dash, build_url_path
-from .keys import IndexKey
+from .keys import IndexKey, PrefixKey
 
 class Collection(object):
 

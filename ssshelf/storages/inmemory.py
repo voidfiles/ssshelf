@@ -1,5 +1,5 @@
 import pygtrie
-from ssshelf.keys import get_path_from_storage_key
+from ssshelf.keys import get_path_from_storage_key, get_path_from_prefix_key
 
 class InMemoryStorage(object):
 
@@ -50,7 +50,7 @@ class InMemoryStorage(object):
         return keys
 
     async def get_keys(self, prefix, max_keys=200, continuation_token=None):
-
+        prefix = get_path_from_prefix_key(prefix)
         key_iterator = self.t.iterkeys(prefix)
 
         try:

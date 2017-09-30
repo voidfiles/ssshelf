@@ -24,6 +24,21 @@ class IndexKey(object):
 
         return cls(pk, url_parts)
 
+@attr.s
+class PrefixKey(object):
+    index_parts = attr.ib()
+
+    def as_url_path(self):
+        url_parts = self.index_parts
+
+        return build_url_path(url_parts)
+
+    @classmethod
+    def from_url_path(cls, path):
+        url_parts = parse_url_path(path)
+
+        return cls(pk, url_parts)
+
 
 def encode_int_as_str(n):
     s = []
@@ -61,3 +76,9 @@ def get_path_from_storage_key(storage_key):
         return storage_key.as_url_path()
 
     return storage_key
+
+def get_path_from_prefix_key(prefix):
+    if isinstance(prefix, PrefixKey):
+        return prefix.as_url_path()
+
+    return prefix
