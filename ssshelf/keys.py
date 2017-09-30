@@ -1,8 +1,28 @@
+import attr
 import string
+from .utils import build_url_path, parse_url_path
 
 ALPHABET = string.ascii_uppercase + string.ascii_lowercase
 ALPHABET_REVERSE = dict((c, i) for (i, c) in enumerate(ALPHABET))
 BASE = len(ALPHABET)
+
+
+@attr.s
+class IndexKey(object):
+    pk = attr.ib()
+    index_parts = attr.ib()
+
+    def as_url_path(self):
+        url_parts = self.index_parts + [self.pk]
+
+        return build_url_path(url_parts)
+
+    @classmethod
+    def from_url_path(cls, path):
+        url_parts = parse_url_path(path)
+        pk = url_parts.pop()
+
+        return cls(pk, url_parts)
 
 
 def encode_int_as_str(n):

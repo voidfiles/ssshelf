@@ -1,5 +1,5 @@
 from ssshelf.keys import (encode_int_as_str, decode_str_as_int,
-                          reverse)
+                          reverse, IndexKey)
 
 
 def test_encode_int_as_str():
@@ -23,3 +23,12 @@ def test_reverse():
     ccc = sorted(ccc, key=lambda x: x[1])
 
     assert [x[0] for x in ccc] == [5, 4, 3, 2, 1]
+
+
+def test_index_key():
+    a = IndexKey(pk='d', index_parts=['a', 'b', 'c'])
+    assert a.as_url_path() == 'a/b/c/d'
+
+    b = IndexKey.from_url_path('a/b/c/d')
+
+    assert a == b

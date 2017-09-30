@@ -3,7 +3,7 @@ import time
 import json
 from uuid import UUID
 import re
-from urllib.parse import quote_plus
+from urllib.parse import quote_plus, unquote_plus
 
 
 def camelcase_to_dash(s):
@@ -41,6 +41,10 @@ def json_dump(*args, **kwargs):
 
 def build_url_path(parts):
     return '/'.join([quote_plus(x) for x in parts])
+
+
+def parse_url_path(path):
+    return [unquote_plus(x) for x in path.split("/")]
 
 
 def datetime_to_secs(dt):
