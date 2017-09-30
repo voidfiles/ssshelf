@@ -70,7 +70,9 @@ Example
             return str(item['pk'])
 
         def key(self, item):
-            return convert_datetime_to_str(item['created_at'])
+            return [
+              [convert_datetime_to_str(item['created_at'])]
+            ]
 
 
     class BookmarkManager(CManager):
@@ -88,12 +90,9 @@ Example
 
         await bookmark_manager.add_item(bookmark)
 
-        items = await bookmark_manager.every.get_items()
+        resp = await bookmark_manager.every.get_items()
 
         assert resp['items'][0]['link'] == 'http://google.com'
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(demo())
-
-
-

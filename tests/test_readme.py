@@ -25,7 +25,9 @@ class AllBookmarks(Collection):
         return str(item['pk'])
 
     def key(self, item):
-        return convert_datetime_to_str(item['created_at'])
+        return [
+          [convert_datetime_to_str(item['created_at'])]
+        ]
 
 
 class BookmarkManager(CManager):
@@ -33,19 +35,19 @@ class BookmarkManager(CManager):
     every = AllBookmarks()
 
 async def demo():
-	bookmark_manager = BookmarkManager(InMemoryStorage())
+    bookmark_manager = BookmarkManager(InMemoryStorage())
 
-	bookmark = {
-		'pk': simpleflake.simpleflake(),
-		'link': 'http://google.com',
-		'created_at': datetime.utcnow()
-	}
+    bookmark = {
+        'pk': simpleflake.simpleflake(),
+        'link': 'http://google.com',
+        'created_at': datetime.utcnow()
+    }
 
-	await bookmark_manager.add_item(bookmark)
+    await bookmark_manager.add_item(bookmark)
 
-	resp = await bookmark_manager.every.get_items()
+    resp = await bookmark_manager.every.get_items()
 
-	assert resp['items'][0]['link'] == 'http://google.com'
+    assert resp['items'][0]['link'] == 'http://google.com'
 
 
 def test_readme(loop):
