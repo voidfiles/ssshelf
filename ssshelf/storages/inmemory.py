@@ -1,5 +1,5 @@
 import pygtrie
-
+from ssshelf.keys import get_path_from_storage_key
 
 class InMemoryStorage(object):
 
@@ -8,6 +8,7 @@ class InMemoryStorage(object):
         self.t.enable_sorting()
 
     async def create_key(self, storage_key, data=None):
+        storage_key = get_path_from_storage_key(storage_key)
         data = data if data else bytes()
 
         self.t[storage_key] = data
@@ -15,15 +16,16 @@ class InMemoryStorage(object):
         return data
 
     async def remove_key(self, storage_key):
+        storage_key = get_path_from_storage_key(storage_key)
         del self.t[storage_key]
 
     async def remove_keys(self, storage_keys):
-
+        storage_keys = [get_path_from_storage_key(x) for x in storage_keys]
         for key in storage_keys:
             del self.t[key]
 
     async def get_key(self, storage_key):
-
+        storage_key = get_path_from_storage_key(storage_key)
         return {
             'data': self.t.get(storage_key),
             'metadata': {},
