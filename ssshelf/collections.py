@@ -70,7 +70,7 @@ class Collection(object):
         prefix_parts = prefix_parts if prefix_parts else []
 
         resp = await self.storage.get_keys(
-            prefix=build_url_path(self.base_key_parts() + prefix_parts),
+            prefix=PrefixKey(self.base_key_parts() + prefix_parts),
             max_keys=max_keys,
             continuation_token=continuation_token
         )

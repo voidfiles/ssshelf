@@ -33,12 +33,6 @@ class PrefixKey(object):
 
         return build_url_path(url_parts)
 
-    @classmethod
-    def from_url_path(cls, path):
-        url_parts = parse_url_path(path)
-
-        return cls(pk, url_parts)
-
 
 def encode_int_as_str(n):
     s = []
