@@ -3,3 +3,4 @@ paco>=0.1.11
 retrying>=1.3.3
 pygtrie>=2.2
 six>=1.10.0
+attrs>=17.2.0

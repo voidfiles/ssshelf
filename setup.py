@@ -49,6 +49,7 @@ requires = [
     "retrying>=1.3.3",
     "pygtrie>=2.2",
     "six>=1.10.0",
+    "attrs>=17.2.0",
 ]
 
 test_requirements = [
@@ -56,7 +57,6 @@ test_requirements = [
     "pytest",
     "requests",
     "flask",
-    "attrs",
     "iso8601==0.1.12",
     "pytest-asyncio",
     "pystrainer==1.3.1",
