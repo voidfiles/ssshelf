@@ -8,7 +8,7 @@ them by keys.
 """
 
 from .utils import camelcase_to_dash, build_url_path
-
+from .keys import IndexKey
 
 class IManager(object):
     def __init__(self, prefix='items', name=None, storage=None):
@@ -26,11 +26,7 @@ class IManager(object):
         return str(item.pk)
 
     def generate_key_for_pk(self, pk):
-
-        key_parts = self.base_key_parts()
-        key_parts += [pk]
-
-        return build_url_path(key_parts)
+        return IndexKey(pk, self.base_key_parts())
 
     def serialize_item(self, item):
         raise NotImplementedError

@@ -10,7 +10,7 @@ BASE = len(ALPHABET)
 @attr.s
 class IndexKey(object):
     pk = attr.ib()
-    index_parts = attr.ib()
+    index_parts = attr.ib(default=attr.Factory(list))
 
     def as_url_path(self):
         url_parts = self.index_parts + [self.pk]
@@ -63,16 +63,3 @@ def reverse(s):
         n += [ALPHABET[new_ind]]
 
     return ''.join(n)
-
-
-def get_path_from_storage_key(storage_key):
-    if isinstance(storage_key, IndexKey):
-        return storage_key.as_url_path()
-
-    return storage_key
-
-def get_path_from_prefix_key(prefix):
-    if isinstance(prefix, PrefixKey):
-        return prefix.as_url_path()
-
-    return prefix

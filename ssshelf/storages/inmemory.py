@@ -1,5 +1,4 @@
 import pygtrie
-from ssshelf.keys import get_path_from_storage_key, get_path_from_prefix_key
 
 class InMemoryStorage(object):
 
@@ -8,26 +7,22 @@ class InMemoryStorage(object):
         self.t.enable_sorting()
 
     async def create_key(self, storage_key, data=None):
-        storage_key = get_path_from_storage_key(storage_key)
         data = data if data else bytes()
 
-        self.t[storage_key] = data
+        self.t[storage_key.as_url_path()] = data
 
         return data
 
     async def remove_key(self, storage_key):
-        storage_key = get_path_from_storage_key(storage_key)
-        del self.t[storage_key]
+        del self.t[storage_key.as_url_path()]
 
     async def remove_keys(self, storage_keys):
-        storage_keys = [get_path_from_storage_key(x) for x in storage_keys]
         for key in storage_keys:
-            del self.t[key]
+            del self.t[key.as_url_path()]
 
     async def get_key(self, storage_key):
-        storage_key = get_path_from_storage_key(storage_key)
         return {
-            'data': self.t.get(storage_key),
+            'data': self.t.get(storage_key.as_url_path()),
             'metadata': {},
         }
 
@@ -50,8 +45,7 @@ class InMemoryStorage(object):
         return keys
 
     async def get_keys(self, prefix, max_keys=200, continuation_token=None):
-        prefix = get_path_from_prefix_key(prefix)
-        key_iterator = self.t.iterkeys(prefix)
+        key_iterator = self.t.iterkeys(prefix.as_url_path())
 
         try:
             keys = self._build_keys(key_iterator, max_keys, continuation_token)

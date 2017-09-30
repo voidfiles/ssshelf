@@ -2,8 +2,6 @@ import asyncio
 import aiobotocore
 from retrying import retry
 
-from ssshelf.keys import get_path_from_storage_key, get_path_from_prefix_key
-
 @retry(stop_max_attempt_number=2)
 def retry_client(method, *args, **kwargs):
     return method(*args, **kwargs)
@@ -28,30 +26,27 @@ class S3Storage(object):
         return self.s3_client
 
     async def create_key(self, storage_key, data=None):
-        storage_key = get_path_from_storage_key(storage_key)
         data = data if data else bytes()
 
         await retry_client(
             self.get_s3_client().put_object,
             Bucket=self.bucket,
-            Key=storage_key,
+            Key=storage_key.as_url_path(),
             Body=data
         )
 
         return data
 
     async def remove_key(self, storage_key):
-        storage_key = get_path_from_storage_key(storage_key)
         await retry_client(
             self.get_s3_client().delete_object,
             Bucket=self.bucket,
-            Key=storage_key,
+            Key=storage_key.as_url_path(),
         )
 
     async def remove_keys(self, storage_keys):
         reqs = []
         for key in storage_keys:
-            key = get_path_from_storage_key(key)
             reqs += [self.remove_key(key)]
 
         resps = [await x for x in reqs]
@@ -68,7 +63,7 @@ class S3Storage(object):
         resp = await retry_client(
             self.get_s3_client().get_object,
             Bucket=self.bucket,
-            Key=storage_key,
+            Key=storage_key.as_url_path(),
         )
 
         return {
@@ -77,13 +72,12 @@ class S3Storage(object):
         }
 
     async def get_keys(self, prefix, max_keys=200, continuation_token=None):
-        prefix = get_path_from_prefix_key(prefix)
         resp = None
 
         kwargs = {
             "Bucket": self.bucket,
             "MaxKeys": max_keys,
-            "Prefix": prefix,
+            "Prefix": prefix.as_url_path(),
         }
 
         if continuation_token:

@@ -9,6 +9,7 @@ import pytest
 
 from ssshelf.items import IManager
 from ssshelf.utils import json_dump
+from ssshelf.keys import IndexKey
 from .dummy_storage import DummyStorage
 
 
@@ -79,7 +80,7 @@ def test_serializer_deserializer():
 def test_generate_key_for_pk():
     bookmark_manager = Bookmark()
     bookmark = BookmarkModel(link='http://google.com')
-    expected_key = 'items/bookmark/%s' % (str(bookmark.pk))
+    expected_key = IndexKey(pk=str(bookmark.pk), index_parts=['items', 'bookmark'])
     assert bookmark_manager.generate_key_for_pk(str(bookmark.pk)) == expected_key
 
 
