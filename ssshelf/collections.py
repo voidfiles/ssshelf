@@ -30,7 +30,7 @@ class Collection(object):
         return str(item.pk)
 
     def parse_pk_from_key(self, key):
-        return key.split('/')[-1]
+        return key.pk
 
     def base_key_parts(self):
         return [self.prefix, self.name]

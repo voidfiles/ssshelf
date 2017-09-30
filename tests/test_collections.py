@@ -62,7 +62,9 @@ def test_pk():
     bookmark = BookmarkModel(link='http://google.com')
 
     assert ab.get_pk(bookmark) == str(bookmark.pk)
-    assert ab.parse_pk_from_key('asdf/asdfsdd/23/ab') == 'ab'
+    assert ab.parse_pk_from_key(
+        IndexKey("ab", ["asdf", "asdfsdd", "23"])
+    ) == 'ab'
 
 
 def test_generate_keys():
@@ -113,12 +115,12 @@ def test_get_keys(loop):
     ab.set_storage(ds)
     ab.set_item_manager(im)
     ds._set_get_keys({
-        'keys': ["blah/19"]
+        'keys': [IndexKey("19", ["blah"])]
     })
 
     resp = loop.run_until_complete(ab.get_keys())
     assert ds.get_keys_call_count == 1
-    assert resp['keys'] == ['19']
+    assert resp['keys'] == ["19"]
 
 
 def test_get_items(loop):
@@ -131,7 +133,7 @@ def test_get_items(loop):
     ab.set_item_manager(im)
 
     ds._set_get_keys({
-        'keys': ["blah/19"]
+        'keys': [IndexKey("19", ["blah"])]
     })
 
     ds._set_get_key({})

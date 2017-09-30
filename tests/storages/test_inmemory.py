@@ -32,14 +32,18 @@ def test_multiple_keys(loop):
     keys = sorted([x for x in "abcdefghijklmnopqrst"], reverse=True)
     document_str = bytes(json.dumps(document), 'utf8')
     for i in keys:
-        loop.run_until_complete(storage.create_key(IndexKey('bulk_test%s' % (i)), data=document_str))
+        loop.run_until_complete(storage.create_key(
+            IndexKey('bulk_test%s' % (i)), data=document_str))
 
-    resp = loop.run_until_complete(storage.get_keys(PrefixKey(['bulk_test']), max_keys=10))
+    resp = loop.run_until_complete(
+        storage.get_keys(PrefixKey(['bulk_test']), max_keys=10))
+
     reverse_keys = sorted(keys)
     assert len(resp['keys']) == 10
 
     for i, key in enumerate(reverse_keys[0:9]):
-        assert resp['keys'][i] == 'bulk_test%s' % (key)
+        assert resp['keys'][i] == IndexKey(pk='bulk_test%s' % (key),
+                                           index_parts=[])
 
     assert 'continuation_token' in resp
     resp2 = loop.run_until_complete(
@@ -48,8 +52,8 @@ def test_multiple_keys(loop):
     )
     assert len(resp2['keys']) == 10
     for i, key in enumerate(reverse_keys[10:]):
-        print(i)
-        assert resp2['keys'][i] == 'bulk_test%s' % (key)
+        assert resp2['keys'][i] == IndexKey(pk='bulk_test%s' % (key),
+                                            index_parts=[])
 
     assert 'continuation_token' not in resp2
 

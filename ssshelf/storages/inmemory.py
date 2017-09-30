@@ -1,5 +1,7 @@
 import pygtrie
 
+from ssshelf.keys import IndexKey
+
 class InMemoryStorage(object):
 
     def __init__(self):
@@ -37,7 +39,7 @@ class InMemoryStorage(object):
 
                 found_token = True
 
-            keys.append(x)
+            keys.append(IndexKey.from_url_path(x))
 
             if len(keys) == max_keys:
                 break

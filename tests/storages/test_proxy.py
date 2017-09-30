@@ -32,5 +32,5 @@ async def test_storage_proxy():
 
     assert 'keys' in blah
     assert len(blah['keys']) == 2
-    assert 'a1' in blah['keys']
-    assert 'a2' in blah['keys']
+    assert IndexKey(pk='a1', index_parts=[]) in blah['keys']
+    assert IndexKey(pk='a2', index_parts=[]) in blah['keys']
