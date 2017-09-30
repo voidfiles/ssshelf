@@ -7,8 +7,8 @@ queryable ordered lists.
 
 """
 
-from .utils import RAISE_NOT_IMPLEMENTED, build_url_path, camelcase_to_dash
-
+from .utils import RAISE_NOT_IMPLEMENTED, camelcase_to_dash, build_url_path
+from .keys import IndexKey
 
 class Collection(object):
 
@@ -41,9 +41,8 @@ class Collection(object):
         for key in self.key(item):
             key_parts = self.base_key_parts()
             key_parts += key
-            key_parts += [pk]
 
-            yield build_url_path(key_parts)
+            yield IndexKey(pk, key_parts)
 
     async def add_item(self, item):
         keys = []

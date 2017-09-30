@@ -9,7 +9,7 @@ from ssshelf.collections import Collection
 from ssshelf.items import IManager
 from .dummy_storage import DummyStorage
 from ssshelf.utils import json_dump, datetime_to_secs
-from ssshelf.keys import encode_int_as_str, reverse
+from ssshelf.keys import encode_int_as_str, reverse, IndexKey
 
 @attr.s
 class BookmarkModel(object):
@@ -74,7 +74,8 @@ def test_generate_keys():
     )
 
     assert list(ab.generate_keys_for_item(bookmark)) == [
-        'collections/all-bookmarks/wBqBzT/1eeaf5ed-11a1-4f72-8c1f-9c53b9584e34'
+        IndexKey(pk='1eeaf5ed-11a1-4f72-8c1f-9c53b9584e34',
+                 index_parts=['collections', 'all-bookmarks', 'wBqBzT'])
     ]
 
 
