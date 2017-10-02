@@ -2,6 +2,8 @@ import asyncio
 import aiobotocore
 from retrying import retry
 
+from ssshelf.keys import IndexKey
+
 @retry(stop_max_attempt_number=2)
 def retry_client(method, *args, **kwargs):
     return method(*args, **kwargs)
@@ -88,7 +90,7 @@ class S3Storage(object):
             **kwargs,
         )
 
-        response_keys = [x['Key'] for x in resp.get('Contents', [])]
+        response_keys = [IndexKey.from_url_path(x['Key']) for x in resp.get('Contents', [])]
 
         resp_data = {
             'keys': response_keys,
@@ -96,6 +98,6 @@ class S3Storage(object):
 
         after = resp.get('IsTruncated')
         if after:
-            resp_data['after'] = resp_data['keys'][-1]
+            resp_data['after'] = resp.get('Contents', [])[-1]['Key']
 
         return resp_data

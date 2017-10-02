@@ -16,7 +16,8 @@ SSShelf
    :alt: Test Coverage
 
 
-An S3 persistence manager. If you squint closely enough you could even call it a database.
+An S3 persistence manager. If you squint closely enough you could
+even call it a database.
 
 Goals
 -----
