@@ -62,11 +62,17 @@ class S3Storage(object):
         # )
 
     async def get_key(self, storage_key):
-        resp = await retry_client(
-            self.get_s3_client().get_object,
-            Bucket=self.bucket,
-            Key=storage_key.as_url_path(),
-        )
+        try:
+            resp = await retry_client(
+                self.get_s3_client().get_object,
+                Bucket=self.bucket,
+                Key=storage_key.as_url_path(),
+            )
+        except self.get_s3_client().exceptions.NoSuchKey:
+            return {
+                'data': None,
+                'metadata': None,
+            }
 
         return {
             'data': await resp.get('Body').read(),

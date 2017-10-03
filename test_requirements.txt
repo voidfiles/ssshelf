@@ -10,3 +10,5 @@ simpleflake
 pytest-cov
 coverage
 fakeredis
+cython
+lsm-db

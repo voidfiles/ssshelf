@@ -29,9 +29,10 @@ def test_my_model_save(s3_client, loop):
 
     loop.run_until_complete(storage.remove_key(IndexKey('test')))
 
-    with pytest.raises(ClientError):
-        loop.run_until_complete(storage.get_key(IndexKey('test')))
+    resp = loop.run_until_complete(storage.get_key(IndexKey('test')))
+    assert resp['data'] is None
 
+    loop.run_until_complete(storage.remove_key(IndexKey('test')))
 
 @pytest.mark.moto
 def test_get_s3_client():
