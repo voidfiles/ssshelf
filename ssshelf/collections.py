@@ -39,6 +39,9 @@ class Collection(object):
         pk = self.get_pk(item)
 
         for key in self.key(item):
+            if not key:
+                continue
+
             key_parts = self.base_key_parts()
             key_parts += key
 

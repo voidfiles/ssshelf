@@ -44,6 +44,18 @@ class AllBookmarks(Collection):
         ]
 
 
+class LinkBookmarks(Collection):
+    def key(self, item):
+        if not item.link:
+            return [
+                [],
+            ]
+
+        return [
+            [item.link]
+        ]
+
+
 def test_not_impl():
     with pytest.raises(NotImplementedError):
         Dummy.key({})
@@ -69,6 +81,8 @@ def test_pk():
 
 def test_generate_keys():
     ab = AllBookmarks()
+    lb = LinkBookmarks()
+
     bookmark = BookmarkModel(
         link='http://google.com',
         created_at=datetime.datetime(2017, 10, 10),
@@ -79,6 +93,24 @@ def test_generate_keys():
         IndexKey(pk='1eeaf5ed-11a1-4f72-8c1f-9c53b9584e34',
                  index_parts=['collections', 'all-bookmarks', 'wBqBzT'])
     ]
+
+    assert list(lb.generate_keys_for_item(bookmark)) == [
+        IndexKey(pk='1eeaf5ed-11a1-4f72-8c1f-9c53b9584e34',
+                 index_parts=['collections', 'link-bookmarks', 'http://google.com'])
+    ]
+
+    bookmark = BookmarkModel(
+        link=None,
+        created_at=datetime.datetime(2017, 10, 10),
+        pk=UUID("1eeaf5ed-11a1-4f72-8c1f-9c53b9584e34")
+    )
+
+    assert list(ab.generate_keys_for_item(bookmark)) == [
+        IndexKey(pk='1eeaf5ed-11a1-4f72-8c1f-9c53b9584e34',
+                 index_parts=['collections', 'all-bookmarks', 'wBqBzT'])
+    ]
+
+    assert list(lb.generate_keys_for_item(bookmark)) == []
 
 
 def test_add_item(loop):
