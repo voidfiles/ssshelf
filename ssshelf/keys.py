@@ -33,7 +33,7 @@ class PrefixKey(object):
 
         return build_url_path(url_parts)
 
-
+# Only suitable for positive numbers
 def encode_int_as_str(n):
     s = []
 
@@ -54,7 +54,7 @@ def decode_str_as_int(s):
 
     return n
 
-
+# This only works if all strings are the same length
 def reverse(s):
     n = []
     for i in s:
